@@ -1,91 +1,125 @@
-import java.util.Scanner;
-
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 public class Main {
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        Arena arena = new Arena();
-        int opcao = -1;
+    public static class GUI extends JFrame{
+        private final Arena arena;
+        
+        public GUI(Arena arena) {
+            this.arena = arena;
+            setTitle("Arena de Batalha de RPG");
+            setSize(700, 700);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLocationRelativeTo(null);
 
-        System.out.println("╔══════════════════════════════════╗");
-        System.out.println("║    ARENA DE BATALHA DE RPG       ║");
-        System.out.println("╚══════════════════════════════════╝");
+            JPanel painelPrincipal = new JPanel(new GridLayout(7, 1, 10, 10));
+            painelPrincipal.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        while (opcao != 0) {
-            System.out.println("\n--- MENU ---");
-            System.out.println("1. Cadastrar personagem (atributos padrão por tipo)");
-            System.out.println("2. Cadastrar personagem (atributos personalizados)");
-            System.out.println("3. Listar personagens");
-            System.out.println("4. Realizar batalha");
-            System.out.println("5. Ver histórico de batalhas");
-            System.out.println("6. Ver estatísticas da arena");
-            System.out.println("0. Sair");
-            System.out.print("Escolha: ");
-            opcao = sc.nextInt();
-            sc.nextLine(); // limpa o buffer
+            //------ Botões do menu ------
+            JButton CadastrarPersonagem = new JButton("1. Cadastrar personagem (atributos padrão por tipo)");
+            painelPrincipal.add(CadastrarPersonagem);
 
-            switch (opcao) {
+            JButton CadastrarPersonagemPersonalizado = new JButton("2. Cadastrar personagem (atributos personalizados)");
+            painelPrincipal.add(CadastrarPersonagemPersonalizado);
 
-                case 1:
-                    System.out.print("Nome do personagem: ");
-                    String nome1 = sc.nextLine();
-                    System.out.println("Tipos disponíveis: Guerreiro, Mago, Arqueiro, Paladino, Viking");
-                    System.out.print("Tipo: ");
-                    String tipo1 = sc.nextLine();
-                    arena.cadastrarPersonagem(nome1, tipo1);
-                    break;
+            JButton ListarPersonagens = new JButton("3. Listar personagens");
+            painelPrincipal.add(ListarPersonagens);
 
-                case 2:
-                    System.out.print("Nome do personagem: ");
-                    String nome2 = sc.nextLine();
-                    System.out.println("Tipos disponíveis: Guerreiro, Mago, Arqueiro, Paladino, Viking");
-                    System.out.print("Tipo: ");
-                    String tipo2 = sc.nextLine();
-                    System.out.print("Vida: ");
-                    int vida = sc.nextInt();
-                    System.out.print("Ataque: ");
-                    int ataque = sc.nextInt();
-                    System.out.print("Defesa: ");
-                    int defesa = sc.nextInt();
-                    sc.nextLine();
-                    arena.cadastrarPersonagem(nome2, tipo2, vida, ataque, defesa);
-                    break;
+            JButton Batalhar = new JButton("4. Batalhar");
+            painelPrincipal.add(Batalhar);
 
-                case 3:
-                    arena.listarPersonagens();
-                    break;
+            JButton HistoricoBatalhas = new JButton("5. Histórico de batalhas");
+            painelPrincipal.add(HistoricoBatalhas);
 
-                case 4:
-                    if (arena.getPersonagens().size() < 2) {
-                        System.out.println("Cadastre pelo menos 2 personagens para batalhar.");
-                        break;
+            JButton EstatisticasArena = new JButton("6. Estatísticas da arena");
+            painelPrincipal.add(EstatisticasArena);
+
+            JButton Sair = new JButton("0. Sair");
+            painelPrincipal.add(Sair);
+
+            //------ Ações dos botões ------
+            // 1. Cadastrar personagem (atributos padrão por tipo)
+            CadastrarPersonagem.addActionListener((ActionEvent e) -> {
+                String nome = JOptionPane.showInputDialog("Digite o nome do personagem:");
+                if (nome == null) return;
+
+                String[] tipos = {"Guerreiro", "Mago", "Arqueiro", "Paladino", "Viking"};
+                JComboBox<String> tipoComboBox = new JComboBox<>(tipos);
+                int clique = JOptionPane.showConfirmDialog(null, tipoComboBox, "Escolha a classe do personagem", JOptionPane.OK_CANCEL_OPTION);
+
+                if (clique == JOptionPane.OK_OPTION) {
+                    String tipoEscolhido = (String) tipoComboBox.getSelectedItem();
+                    arena.cadastrarPersonagem(nome, tipoEscolhido);
+                    JOptionPane.showMessageDialog(null, "Personagem " + nome + " cadastrado como " + tipoEscolhido + "!");
+                }
+            });
+
+            //2. Cadastrar personagem (atributos personalizados)
+            CadastrarPersonagemPersonalizado.addActionListener((ActionEvent e) -> {
+                String nome = JOptionPane.showInputDialog("Digite o nome do personagem:");
+                if (nome == null) return;
+
+                String[] tipos = {"Guerreiro", "Mago", "Arqueiro", "Paladino", "Viking"};
+                JComboBox<String> tipoComboBox = new JComboBox<>(tipos);
+                int clique = JOptionPane.showConfirmDialog(null, tipoComboBox, "Escolha a classe do personagem", JOptionPane.OK_CANCEL_OPTION);
+
+                if (clique == JOptionPane.OK_OPTION) {
+                    String tipoEscolhido = (String) tipoComboBox.getSelectedItem();
+                    try {
+                        int vida = Integer.parseInt(JOptionPane.showInputDialog("Digite a vida do personagem:"));
+                        int ataque = Integer.parseInt(JOptionPane.showInputDialog("Digite o ataque do personagem:"));
+                        int defesa = Integer.parseInt(JOptionPane.showInputDialog("Digite a defesa do personagem:"));
+                        arena.cadastrarPersonagem(nome, tipoEscolhido, vida, ataque, defesa);
+                        JOptionPane.showMessageDialog(null, "Personagem personalizado " + nome + " (" + tipoEscolhido + ") criado com sucesso!");
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Erro: Você deve digitar apenas números para vida, ataque e defesa.");
                     }
-                    arena.listarPersonagens();
-                    System.out.print("Índice do personagem 1: ");
-                    int idx1 = sc.nextInt();
-                    System.out.print("Índice do personagem 2: ");
-                    int idx2 = sc.nextInt();
-                    sc.nextLine();
+                }
+            });
+            ListarPersonagens.addActionListener((ActionEvent e) -> {
+                arena.listarPersonagens();
+            });
+
+            //4. Batalhar
+            Batalhar.addActionListener((ActionEvent e) -> {
+                if (arena.getPersonagens().size() < 2) {
+                    JOptionPane.showMessageDialog(null, "Cadastre pelo menos 2 personagens para batalhar.");
+                    return;
+                }
+                arena.listarPersonagens();
+                try {
+                    int idx1 = Integer.parseInt(JOptionPane.showInputDialog("Digite o índice do personagem 1:"));
+                    int idx2 = Integer.parseInt(JOptionPane.showInputDialog("Digite o índice do personagem 2:"));
                     arena.realizarBatalha(idx1, idx2);
-                    break;
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Índices inválidos. Operação cancelada.");
+                }
+            });
 
-                case 5:
-                    arena.listarBatalhas();
-                    break;
+            HistoricoBatalhas.addActionListener((ActionEvent e) -> {
+                arena.listarBatalhas();
+            });
+            EstatisticasArena.addActionListener((ActionEvent e) -> {
+                Personagem.exibirEstatisticas();
+            });
+            Sair.addActionListener((ActionEvent e) -> {
+                System.exit(0);
+            });
+            add(painelPrincipal);
+            setVisible(true);
 
-                case 6:
-                    Personagem.exibirEstatisticas();
-                    break;
-
-                case 0:
-                    System.out.println("Encerrando a arena. Até a próxima batalha!");
-                    break;
-
-                default:
-                    System.out.println("Opção inválida. Tente novamente.");
-            }
         }
 
-        sc.close();
+    }   
+    public static void main(String[] args) {
+        Arena arena = new Arena();
+        new GUI(arena);
     }
+
 }
