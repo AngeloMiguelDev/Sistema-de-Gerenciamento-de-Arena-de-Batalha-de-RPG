@@ -1,4 +1,4 @@
-public class Batalha {
+/**public class Batalha {
 
     // Atributos privados
     private Personagem personagem1;
@@ -106,5 +106,89 @@ public class Batalha {
         return "Batalha: " + personagem1.getNome()
              + " vs " + personagem2.getNome()
              + " | " + resultado;
+    }
+}
+**/
+
+public class Batalha {
+
+    private Personagem personagem1;
+    private Personagem personagem2;
+    private Personagem vencedor;
+    private String log; 
+
+    public Batalha(Personagem p1, Personagem p2) {
+        this.personagem1 = p1;
+        this.personagem2 = p2;
+        this.log = "";
+        executarBatalha();
+    }
+
+    private void executarBatalha() {
+        log += "\n========== INÍCIO DA BATALHA ==========\n";
+        log += personagem1.getNome() + " vs " + personagem2.getNome() + "\n";
+        log += "=======================================\n";
+
+        int vidaP1 = personagem1.getVida();
+        int vidaP2 = personagem2.getVida();
+        int turno = 1;
+
+        while (vidaP1 > 0 && vidaP2 > 0) {
+            log += "\n--- Turno " + turno + " ---\n";
+
+            // Polimorfismo em ação! Cada classe calcula seu próprio dano
+            int danoEm2 = personagem1.calcularDano(personagem2);
+            int danoEm1 = personagem2.calcularDano(personagem1);
+
+            vidaP2 -= danoEm2;
+            vidaP1 -= danoEm1;
+
+            if (vidaP2 < 0) vidaP2 = 0;
+            if (vidaP1 < 0) vidaP1 = 0;
+
+            log += personagem1.getNome() + " causa " + danoEm2
+                 + " de dano em " + personagem2.getNome()
+                 + " (Vida restante: " + vidaP2 + ")\n";
+
+            log += personagem2.getNome() + " causa " + danoEm1
+                 + " de dano em " + personagem1.getNome()
+                 + " (Vida restante: " + vidaP1 + ")\n";
+
+            turno++;
+        }
+
+        personagem1.setVida(vidaP1);
+        personagem2.setVida(vidaP2);
+
+        log += "\n========== RESULTADO ==========\n";
+
+        if (vidaP1 > vidaP2) {
+            vencedor = personagem1;
+        } else if (vidaP2 > vidaP1) {
+            vencedor = personagem2;
+        } else {
+            vencedor = null; 
+        }
+
+        if (vencedor != null) {
+            log += "Vencedor: " + vencedor.getNome() + " [" + vencedor.getTipo() + "]\n";
+            Personagem.registrarVitoria(vencedor.getTipo());
+        } else {
+            log += "Resultado: EMPATE!\n";
+        }
+
+        log += "================================\n";
+        Personagem.incrementarBatalhas();
+    }
+
+    public Personagem getPersonagem1() { return personagem1; }
+    public Personagem getPersonagem2() { return personagem2; }
+    public Personagem getVencedor()    { return vencedor; }
+    public String getLog()             { return log; }
+
+    @Override
+    public String toString() {
+        String resultado = (vencedor != null) ? "Vencedor: " + vencedor.getNome() : "Empate";
+        return "Batalha: " + personagem1.getNome() + " vs " + personagem2.getNome() + " | " + resultado;
     }
 }

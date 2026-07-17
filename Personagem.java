@@ -1,4 +1,4 @@
-public class Personagem {
+/**public class Personagem {
 
     // Atributos privados (encapsulamento)
     private String nome;
@@ -106,6 +106,78 @@ public class Personagem {
     // -------------------------------------------------------
     // toString — sobrescrita
     // -------------------------------------------------------
+    @Override
+    public String toString() {
+        return "[" + tipo + "] " + nome
+             + " | Vida: " + vida
+             + " | Ataque: " + ataque
+             + " | Defesa: " + defesa
+             + " | Status: " + (vivo ? "Vivo" : "Morto");
+    }
+}
+**/
+
+public abstract class Personagem implements AcaoDeCombate {
+
+    private String nome;
+    private String tipo;
+    private int vida;
+    private int ataque;
+    private int defesa;
+    private boolean vivo;
+
+    private static int totalBatalhas = 0;
+    private static int vitoriasGuerreiro = 0;
+    private static int vitoriasMago = 0;
+    private static int vitoriasArqueiro = 0;
+    private static int vitoriasOutro = 0;
+
+    public Personagem(String nome, String tipo, int vida, int ataque, int defesa) {
+        this.nome = nome;
+        this.tipo = tipo;
+        this.vida = vida;
+        this.ataque = ataque;
+        this.defesa = defesa;
+        this.vivo = true;
+    }
+
+    public String getNome()   { return nome; }
+    public String getTipo()   { return tipo; }
+    public int getVida()      { return vida; }
+    public int getAtaque()    { return ataque; }
+    public int getDefesa()    { return defesa; }
+    public boolean isVivo()   { return vivo; }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+        if (this.vida <= 0) {
+            this.vida = 0;
+            this.vivo = false;
+        }
+    }
+
+    public static int getTotalBatalhas() { return totalBatalhas; }
+    public static void incrementarBatalhas() { totalBatalhas++; }
+
+    public static void registrarVitoria(String tipo) {
+        switch (tipo) {
+            case "Guerreiro": vitoriasGuerreiro++; break;
+            case "Mago":      vitoriasMago++;      break;
+            case "Arqueiro":  vitoriasArqueiro++;  break;
+            default:          vitoriasOutro++;     break;
+        }
+    }
+
+    public static String obterEstatisticas() {
+        return "========== ESTATÍSTICAS DA ARENA ==========\n" +
+               "Total de batalhas realizadas : " + totalBatalhas + "\n" +
+               "Vitórias do Guerreiro        : " + vitoriasGuerreiro + "\n" +
+               "Vitórias do Mago             : " + vitoriasMago + "\n" +
+               "Vitórias do Arqueiro         : " + vitoriasArqueiro + "\n" +
+               "Vitórias de outros tipos     : " + vitoriasOutro + "\n" +
+               "===========================================\n";
+    }
+
     @Override
     public String toString() {
         return "[" + tipo + "] " + nome
